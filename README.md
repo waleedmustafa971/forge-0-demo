@@ -21,9 +21,9 @@ The pull requests are left unmerged because the defects are benchmark fixtures.
 
 | Issue | Defect | Result |
 | --- | --- | --- |
-| [#1](../../issues/1) | D7: a price cache that is never invalidated | **Verified fix**, [PR #4](../../pull/4). 3 sandbox experiments refuted 2 of 3 explanations; the fix invalidates the cached price on every price change, rather than bypassing the cache (which would break a rate-limit test in another file). 3 model calls, $0.07 |
-| [#2](../../issues/2) | D10: fees read from JSON as strings | **Verified fix**, [PR #5](../../pull/5). The fix parses every fee when the config loads, not just the one in the failing path, so the gift-wrap fee is fixed too. 3 model calls, $0.07 |
-| [#3](../../issues/3) | D12: cart lines in a plain object keyed by numeric id | **Verified fix**, [PR #6](../../pull/6). 3 experiments, 2 of 3 explanations refuted; the fix stores each cart in a `Map`, rather than sorting the output. 3 model calls, $0.12 |
+| [#1](https://github.com/waleedmustafa971/forge-0-demo/issues/1) | D7: a price cache that is never invalidated | **Verified fix**, [PR #4](https://github.com/waleedmustafa971/forge-0-demo/pull/4). 3 sandbox experiments refuted 2 of 3 explanations; the fix invalidates the cached price on every price change, rather than bypassing the cache (which would break a rate-limit test in another file). 3 model calls, $0.07 |
+| [#2](https://github.com/waleedmustafa971/forge-0-demo/issues/2) | D10: fees read from JSON as strings | **Verified fix**, [PR #5](https://github.com/waleedmustafa971/forge-0-demo/pull/5). The fix parses every fee when the config loads, not just the one in the failing path, so the gift-wrap fee is fixed too. 3 model calls, $0.07 |
+| [#3](https://github.com/waleedmustafa971/forge-0-demo/issues/3) | D12: cart lines in a plain object keyed by numeric id | **Verified fix**, [PR #6](https://github.com/waleedmustafa971/forge-0-demo/pull/6). 3 experiments, 2 of 3 explanations refuted; the fix stores each cart in a `Map`, rather than sorting the output. 3 model calls, $0.12 |
 
 All three ran on Muse Spark 1.3 on 2026-10-28. On each fix branch, CI shows exactly one defect fixed
 and no regressions (32 pass, 11 fail). Each fix also passes its defect's hidden tests (3/3), which
