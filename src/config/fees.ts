@@ -12,5 +12,10 @@ const FEES_FILE = new URL('../../config/fees.json', import.meta.url);
 
 /** Operational fees, edited by the operations team without a deploy (`config/fees.json`). */
 export function loadFees(file: URL = FEES_FILE): Fees {
-  return JSON.parse(readFileSync(file, 'utf8')) as Fees;
+  const raw = JSON.parse(readFileSync(file, 'utf8')) as Record<string, unknown>;
+  return {
+    handlingFee: Number(raw.handlingFee),
+    giftWrapFee: Number(raw.giftWrapFee),
+    freeHandlingThreshold: Number(raw.freeHandlingThreshold),
+  };
 }
