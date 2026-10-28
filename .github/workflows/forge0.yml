@@ -66,6 +66,8 @@ jobs:
           AI_MAX_TOKENS: "8192"
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
+          # This demo exists to show real Muse Spark runs: never fall back to the mock provider.
+          if [ -z "$META_API_KEY" ]; then echo "::error::The META_API_KEY secret is empty"; exit 1; fi
           git config --global --add safe.directory "$PWD"
           forge0-ci --repo . --report-dir "$RUNNER_TEMP/forge0-report" --open-pr \
             --base "${{ github.event.repository.default_branch }}" \
