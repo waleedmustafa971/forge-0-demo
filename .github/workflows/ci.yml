@@ -15,21 +15,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # origin/main, for the contract a fix branch is checked against
       - uses: actions/setup-node@v4
         with:
           node-version: 24
       - run: npm ci --no-audit --no-fund
       - run: npm run typecheck
       # The service carries twelve planted defects, so twelve tests fail on main. A FORGE-0 fix PR
-      # (branch forge0/*) must repair exactly one of them and break nothing.
-      - name: Exactly the twelve planted defects fail (eleven on a FORGE-0 fix PR)
+      # (branch forge0/*) must fix exactly one of them and change no other test: checked by name
+      # against .github/expected-tests.txt. A fix branch is checked with main's copy of the list
+      # and the checker, so a patch cannot change the contract it is checked against.
+      - name: Defect contract, test by test
         env:
           HEAD_REF: ${{ github.head_ref || github.ref_name }}  # ref_name: dispatched on the branch
         run: |
-          node --test --test-reporter=tap "test/**/*.test.ts" > tap.txt || true
-          failed=$(grep -cE '^    not ok' tap.txt || true)
-          passed=$(grep -cE '^    ok' tap.txt || true)
-          echo "passed=$passed failed=$failed"
-          expected=12
-          case "$HEAD_REF" in forge0/*) expected=11 ;; esac
-          test "$failed" -eq "$expected" && test "$passed" -eq $((43 - expected))
+          node --test --test-reporter=junit --test-reporter-destination=results.xml "test/**/*.test.ts" || true
+          case "$HEAD_REF" in
+            forge0/*)
+              git show origin/main:.github/expected-tests.txt > "$RUNNER_TEMP/expected-tests.txt"
+              git show origin/main:.github/scripts/check_tests.py > "$RUNNER_TEMP/check_tests.py"
+              python3 "$RUNNER_TEMP/check_tests.py" results.xml "$RUNNER_TEMP/expected-tests.txt" "$HEAD_REF" ;;
+            *) python3 .github/scripts/check_tests.py results.xml .github/expected-tests.txt "$HEAD_REF" ;;
+          esac

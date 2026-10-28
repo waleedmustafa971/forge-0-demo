@@ -1,0 +1,43 @@
+fail	cart.test.ts :: shopping cart > lists lines in the order they were added
+pass	cart.test.ts :: shopping cart > merges repeated additions of the same product
+pass	cart.test.ts :: shopping cart > rejects unknown products
+pass	cart.test.ts :: shopping cart > removes a product from the cart
+pass	catalog.test.ts :: catalog prices > quotes the list price of several SKUs
+fail	catalog.test.ts :: catalog prices > quotes the new price after a price change
+pass	catalog.test.ts :: catalog prices > rejects non-positive prices
+fail	checkout-events.test.ts :: checkout events > awards loyalty points once per completed order
+pass	checkout-events.test.ts :: checkout events > captures the order total
+pass	checkout-events.test.ts :: checkout events > sends a receipt for a completed order
+fail	checkout.test.ts :: checkout > leaves inventory untouched when a multi-item order fails
+pass	checkout.test.ts :: checkout > rejects orders that exceed available stock
+pass	checkout.test.ts :: checkout > reserves stock and persists the order on success
+pass	fulfillment.test.ts :: fulfillment > refuses to fulfill an unpaid order
+fail	fulfillment.test.ts :: fulfillment > reports carrier failures and does not mark the order as shipped
+pass	fulfillment.test.ts :: fulfillment > ships every item of a paid order
+pass	giftCards.test.ts :: gift cards > issues a card with the requested balance
+fail	giftCards.test.ts :: gift cards > redeems part of a card balance
+pass	giftCards.test.ts :: gift cards > rejects malformed codes
+pass	loyalty.test.ts :: loyalty points > awards one point per whole unit spent
+pass	loyalty.test.ts :: loyalty points > rejects negative amounts
+fail	loyalty.test.ts :: loyalty points > starts every new account at zero points
+pass	orders.test.ts :: order line items > adds a single item and recomputes the total
+pass	orders.test.ts :: order line items > applies sequential additions in order
+fail	orders.test.ts :: order line items > keeps every item when items are added concurrently
+pass	orders.test.ts :: order line items > rejects items with invalid quantities
+pass	payments.test.ts :: payment capture > captures a payment once when the gateway responds normally
+fail	payments.test.ts :: payment capture > charges the customer exactly once when a timed-out request is retried
+pass	payments.test.ts :: payment capture > does not retry declined cards
+pass	payments.test.ts :: payment capture > gives up after exhausting retries on persistent timeouts
+pass	payments.test.ts :: payment capture > records separate charges for separate capture calls
+pass	pricing-cache.test.ts :: pricing cache > does not look up SKUs that were never quoted
+pass	pricing-cache.test.ts :: pricing cache > looks each SKU up at most once across repeated quotes
+fail	quotes.test.ts :: order quotes > adds the handling fee to small orders
+pass	quotes.test.ts :: order quotes > rejects an empty quote
+pass	quotes.test.ts :: order quotes > waives handling at the free-handling threshold
+pass	refunds.test.ts :: refunds > refunds a single-item order and restocks it
+fail	refunds.test.ts :: refunds > refunds the full amount and restocks every line of the order
+pass	refunds.test.ts :: refunds > refuses to refund an unpaid order
+pass	status.test.ts :: order status lifecycle > allows the standard happy path
+fail	status.test.ts :: order status lifecycle > does not allow a cancelled order to be paid or shipped
+pass	status.test.ts :: order status lifecycle > rejects moving a shipped order back to pending
+pass	status.test.ts :: order status lifecycle > treats re-applying the current status as a no-op
