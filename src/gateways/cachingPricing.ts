@@ -19,4 +19,8 @@ export class CachingPricingClient implements PricingClient {
     this.cache.set(sku, price);
     return price;
   }
+
+  invalidate(sku: string): void {
+    this.cache.delete(sku);
+  }
 }

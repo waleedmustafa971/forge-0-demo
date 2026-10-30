@@ -4,9 +4,9 @@ import type { PricingClient } from '../gateways/pricing.ts';
 
 export class CatalogService {
   private readonly priceBook: PriceBook;
-  private readonly pricing: PricingClient;
+  private readonly pricing: PricingClient & { invalidate?: (sku: string) => void };
 
-  constructor(priceBook: PriceBook, pricing: PricingClient) {
+  constructor(priceBook: PriceBook, pricing: PricingClient & { invalidate?: (sku: string) => void }) {
     this.priceBook = priceBook;
     this.pricing = pricing;
   }
@@ -15,6 +15,7 @@ export class CatalogService {
   async updatePrice(sku: string, price: number): Promise<void> {
     if (!Number.isFinite(price) || price <= 0) throw new ValidationError(`Invalid price for ${sku}: ${price}`);
     await this.priceBook.setPrice(sku, price);
+    this.pricing.invalidate?.(sku);
   }
 
   /** Quotes the current list price of every SKU in `skus`. */
