@@ -18,7 +18,7 @@ export interface CartLine {
 /** Shopping carts, one per customer. Lines keep the order in which products were first added. */
 export class CartService {
   /** customerId -> productId -> line */
-  private readonly carts = new Map<string, Record<number, CartLine>>();
+  private readonly carts = new Map<string, Map<number, CartLine>>();
 
   add(customerId: string, sku: string, quantity = 1): CartLine[] {
     const productId = PRODUCT_IDS[sku];
@@ -26,28 +26,27 @@ export class CartService {
     if (!Number.isInteger(quantity) || quantity <= 0) {
       throw new ValidationError(`Invalid quantity for ${sku}: ${quantity}`);
     }
-    const cart = this.carts.get(customerId) ?? {};
-    const line = cart[productId];
+    const cart = this.carts.get(customerId) ?? new Map<number, CartLine>();
+    const line = cart.get(productId);
     if (line) line.quantity += quantity;
-    else cart[productId] = { productId, sku, quantity };
+    else cart.set(productId, { productId, sku, quantity });
     this.carts.set(customerId, cart);
     return this.lines(customerId);
   }
 
   remove(customerId: string, sku: string): CartLine[] {
     const cart = this.carts.get(customerId);
-    if (cart) delete cart[PRODUCT_IDS[sku]];
+    if (cart) cart.delete(PRODUCT_IDS[sku]);
     return this.lines(customerId);
   }
 
   /** The cart as the storefront shows it. */
   lines(customerId: string): CartLine[] {
-    return Object.values(this.carts.get(customerId) ?? {}).map((line) => ({ ...line }));
+    return [...(this.carts.get(customerId)?.values() ?? [])].map((line) => ({ ...line }));
   }
 
   /** Order items for checkout, in cart order (the order confirmation lists them that way). */
   toOrderItems(customerId: string): NewOrderItem[] {
-    const cart = this.carts.get(customerId) ?? {};
-    return Object.keys(cart).map((id) => ({ sku: cart[Number(id)].sku, quantity: cart[Number(id)].quantity }));
+    return [...(this.carts.get(customerId)?.values() ?? [])].map((line) => ({ sku: line.sku, quantity: line.quantity }));
   }
 }
